@@ -23,6 +23,12 @@ function! editorconfig#trim_trailing_whitespace#execute(value) abort
 endfunction
 
 function! s:do_trim_trailing_whitespace() abort "{{{
+  " check if file size greater than editorconfig_max_file_size
+  let l:size = get(g:, 'editorconfig_max_file_size', 1024*1024)
+  let l:max_lines = get(g:, 'editorconfig_max_lines', 10000)
+  if getfsize(expand('<afile>')) > l:size || line('$') > l:max_lines
+    return
+  endif
   let view = winsaveview()
   try
     keeppatterns %s/\s\+$//e
